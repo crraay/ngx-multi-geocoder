@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
-import { AigeoGeocoderService } from "../../modules/aigeo/services/aigeo-geocoder.service";
+import { AigeoGeocoderService } from "../../services/aigeo-geocoder.service";
+import { IGeoObject } from "../../interfaces/geo-object";
+import { LeafletMapComponent } from "../leaflet-map/leaflet-map.component";
 
 
 @Component({
@@ -9,11 +11,12 @@ import { AigeoGeocoderService } from "../../modules/aigeo/services/aigeo-geocode
     styleUrls: ['./root.component.scss']
 })
 export class RootComponent implements OnInit {
-    searchQuery = 'Москва';
+    searchQuery = 'красноярск';
+    @ViewChild('leafletMap') leafletMapComponent: LeafletMapComponent;
 
     // TODO turn into BehaviourSubject
     // TODO move to separate component
-    aigeoData = null;
+    aigeoData: IGeoObject[] = null;
 
     constructor(
         private aigeoService: AigeoGeocoderService,
@@ -23,10 +26,16 @@ export class RootComponent implements OnInit {
     }
 
     onSearchBtnClick() {
+        this.leafletMapComponent.reset();
+
         this.aigeoService.search(this.searchQuery)
-            .subscribe(data => {
+            .subscribe((data: IGeoObject[]) => {
                 this.aigeoData = data;
+                this.leafletMapComponent.append(data);
             });
     }
 
+    onItemClick(item: IGeoObject) {
+        this.leafletMapComponent.show(item);
+    }
 }

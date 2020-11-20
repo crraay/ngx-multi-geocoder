@@ -1,9 +1,14 @@
 <input [(ngModel)]="searchQuery" placeholder="Type country, city or street here..."/>
 <button (click)="onSearchBtnClick()">search!</button>
 
+<leaflet-map #leafletMap></leaflet-map>
+
 <h5 *ngIf="aigeoData"> Aigeo data</h5>
 <ul>
-    <li *ngFor="let item of aigeoData">
-        {{ item.fulladdressstring }}
+    <li *ngFor="let item of aigeoData" (click)="onItemClick(item)">
+        {{ item.title }}
+        <span *ngIf="item.lat && item.long">
+        ({{ item.lat | number:'1.2-2' }}, {{ item.long | number:'1.2-2' }})
+        </span>
     </li>
 </ul>
