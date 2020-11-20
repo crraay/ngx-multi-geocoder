@@ -1,0 +1,9 @@
+<input [(ngModel)]="searchQuery" placeholder="Type country, city or street here..."/>
+<button (click)="onSearchBtnClick()">search!</button>
+
+<h5 *ngIf="aigeoData"> Aigeo data</h5>
+<ul>
+    <li *ngFor="let item of aigeoData">
+        {{ item.fulladdressstring }}
+    </li>
+</ul>
