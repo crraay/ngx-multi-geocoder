@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ngx-multi-geocoder-ng11min": {
+    "ngx-multi-geocoder": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -41,7 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/ngx-multi-geocoder-ng11min",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -61,8 +61,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "replace": "src/env/env.ts",
+                  "with": "src/env/env.prod.ts"
                 }
               ],
               "optimization": true,
@@ -90,22 +90,22 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ngx-multi-geocoder-ng11min:build"
+            "browserTarget": "ngx-multi-geocoder:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ngx-multi-geocoder-ng11min:build:production"
+              "browserTarget": "ngx-multi-geocoder:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ngx-multi-geocoder-ng11min:build"
+            "browserTarget": "ngx-multi-geocoder:build"
           }
         }
       }
     }
   },
-  "defaultProject": "ngx-multi-geocoder-ng11min"
+  "defaultProject": "ngx-multi-geocoder"
 }
