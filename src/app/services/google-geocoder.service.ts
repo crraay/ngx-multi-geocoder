@@ -3,36 +3,35 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { switchMap } from "rxjs/operators";
 
+import { env } from "../../env/env";
 import { IGeoObject } from "../interfaces/geo-object";
 import { IGeocoderService } from "../interfaces/geocoder-service";
 
 @Injectable({
     providedIn: 'root'
 })
-export class AigeoGeocoderService implements IGeocoderService {
-    private readonly path = 'http://api.aigeo.ru/geocoder/service';
+export class GoogleGeocoderService implements IGeocoderService {
+    private readonly path = 'https://maps.googleapis.com/maps/api/geocode/json';
 
     constructor(
         private httpClient: HttpClient,
     ) { }
 
     search(query: string): Observable<IGeoObject[]> {
-        const url = `${this.path}?format=json&search=${query}`;
+        const url = `${this.path}?key=${env.GOOGLE_API_KEY}&address=${query}`;
 
-        return this.httpClient
-            .get(url)
+        return this.httpClient.get(url)
             .pipe(switchMap((response: any) => {
-                // TODO check status
-                const result = response.response.results
+                const result = response.results
                     .map(i => {
                         return <IGeoObject>{
-                            title: i.fulladdressstring,
-                            lat: i.geoData ? i.geoData.latitude : null,
-                            long: i.geoData ? i.geoData.longitude : null,
+                            title: i.formatted_address,
+                            lat: i.geometry.location.lat,
+                            long: i.geometry.location.lng,
                         }
                     });
 
                 return of(result);
-            }))
+            }));
     }
 }

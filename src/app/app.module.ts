@@ -8,6 +8,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { RootComponent } from './components/root/root.component';
 import { LeafletMapComponent } from "./components/leaflet-map/leaflet-map.component";
 import { AigeoGeocoderService } from "./services/aigeo-geocoder.service";
+import { GoogleGeocoderService } from "./services/google-geocoder.service";
+import { YandexGeocoderService } from "./services/yandex-geocoder.service";
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { AigeoGeocoderService } from "./services/aigeo-geocoder.service";
         LeafletModule
     ],
     providers: [
-        AigeoGeocoderService
+        AigeoGeocoderService,
+        GoogleGeocoderService,
+        YandexGeocoderService,
     ],
     bootstrap: [RootComponent]
 })
