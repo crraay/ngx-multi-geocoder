@@ -1,14 +1,53 @@
-<input [(ngModel)]="searchQuery" placeholder="Type country, city or street here..."/>
-<button (click)="onSearchBtnClick()">search!</button>
+<div class="main container">
 
-<leaflet-map #leafletMap></leaflet-map>
+    <div class="input-group mb-3">
+        <input class="form-control" [(ngModel)]="searchQuery" placeholder="Type country, city or street here..."/>
 
-<h5 *ngIf="aigeoData"> Aigeo data</h5>
-<ul>
-    <li *ngFor="let item of aigeoData" (click)="onItemClick(item)">
-        {{ item.title }}
-        <span *ngIf="item.lat && item.long">
-        ({{ item.lat | number:'1.2-2' }}, {{ item.long | number:'1.2-2' }})
-        </span>
-    </li>
-</ul>
+        <div class="btn-group input-group-append" dropdown>
+            <button dropdownToggle
+                    type="button"
+                    class="btn btn-outline-primary dropdown-toggle"
+                    style="border-radius: 0;">
+            </button>
+            <div *dropdownMenu class="dropdown-menu" role="menu">
+                <span style="padding: 10px;"> Not implemented yet </span>
+            </div>
+
+            <button class="btn btn-outline-primary" (click)="onSearchBtnClick()">Let's search!</button>
+        </div>
+    </div>
+
+    <tabset>
+        <tab heading="Leaflet map">
+            <leaflet-map #leafletMap></leaflet-map>
+        </tab>
+
+        <tab heading="Another map">
+            <p> Nor implemented yet </p>
+        </tab>
+
+    </tabset>
+
+    <br>
+
+    <div class="row">
+        <div *ngIf="aigeoData" class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Aigeo data</h5>
+        <!--            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>-->
+                    <ul class="list-group">
+                        <li *ngFor="let item of aigeoData"
+                            class="list-group-item"
+                            (click)="onItemClick(item)">
+                            {{ item.title }}
+                            <span *ngIf="item.lat && item.long">
+                            ({{ item.lat | number:'1.2-2' }}, {{ item.long | number:'1.2-2' }})
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

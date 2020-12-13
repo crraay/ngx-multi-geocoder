@@ -1,8 +1,11 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { LeafletModule } from "@asymmetrik/ngx-leaflet";
+import { TabsModule } from "ngx-bootstrap/tabs";
+import { BsDropdownModule } from "ngx-bootstrap/dropdown";
 
 import { AppRoutingModule } from './app-routing.module';
 import { RootComponent } from './components/root/root.component';
@@ -19,10 +22,13 @@ import { YandexGeocoderService } from "./services/yandex-geocoder.service";
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         HttpClientModule,
         FormsModule,
         AppRoutingModule,
-        LeafletModule
+        LeafletModule,
+        TabsModule.forRoot(),
+        BsDropdownModule.forRoot(),
     ],
     providers: [
         AigeoGeocoderService,
