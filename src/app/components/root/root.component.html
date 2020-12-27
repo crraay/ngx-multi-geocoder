@@ -1,7 +1,10 @@
 <div class="main container">
 
     <div class="input-group mb-3">
-        <input class="form-control" [(ngModel)]="searchQuery" placeholder="Type country, city or street here..."/>
+        <input class="form-control"
+               [(ngModel)]="searchQuery"
+               placeholder="Type country, city or street here..."
+        />
 
         <div class="btn-group input-group-append" dropdown>
             <button dropdownToggle
@@ -31,23 +34,12 @@
     <br>
 
     <div class="row">
-        <div *ngIf="aigeoData" class="col-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Aigeo data</h5>
-        <!--            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>-->
-                    <ul class="list-group">
-                        <li *ngFor="let item of aigeoData"
-                            class="list-group-item"
-                            (click)="onItemClick(item)">
-                            {{ item.title }}
-                            <span *ngIf="item.lat && item.long">
-                            ({{ item.lat | number:'1.2-2' }}, {{ item.long | number:'1.2-2' }})
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <div *ngFor="let data of sources" class="col-4">
+            <app-data-card
+                    *ngIf="data.source"
+                    [data]="data"
+                    (clicked)="onItemClick($event)"
+            ></app-data-card>
         </div>
     </div>
 </div>

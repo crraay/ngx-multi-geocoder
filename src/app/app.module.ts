@@ -13,12 +13,14 @@ import { LeafletMapComponent } from "./components/leaflet-map/leaflet-map.compon
 import { AigeoGeocoderService } from "./services/aigeo-geocoder.service";
 import { GoogleGeocoderService } from "./services/google-geocoder.service";
 import { YandexGeocoderService } from "./services/yandex-geocoder.service";
+import { DataViewComponent } from './components/data-view/data-view.component';
 
 
 @NgModule({
     declarations: [
         RootComponent,
-        LeafletMapComponent
+        LeafletMapComponent,
+        DataViewComponent
     ],
     imports: [
         BrowserModule,
