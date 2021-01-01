@@ -22,7 +22,7 @@
 
     <tabset>
         <tab heading="Leaflet map">
-            <leaflet-map #leafletMap></leaflet-map>
+            <leaflet-map #leafletMap [data]="data"></leaflet-map>
         </tab>
 
         <tab heading="Another map">
@@ -34,10 +34,10 @@
     <br>
 
     <div class="row">
-        <div *ngFor="let data of sources" class="col-4">
+        <div *ngFor="let d of data" class="col-4">
             <app-data-card
-                    *ngIf="data.source"
-                    [data]="data"
+                    [hidden]="!d || !(d.source | async)"
+                    [data]="d"
                     (clicked)="onItemClick($event)"
             ></app-data-card>
         </div>

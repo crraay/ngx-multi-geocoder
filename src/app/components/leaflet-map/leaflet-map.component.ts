@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { latLng, marker, tileLayer, Map, FeatureGroup } from "leaflet";
+
 import { IGeoObject } from "../../interfaces/geo-object";
+import { IDataView } from "../../interfaces/data-view";
 
 @Component({
     selector: 'leaflet-map',
@@ -9,7 +11,12 @@ import { IGeoObject } from "../../interfaces/geo-object";
 })
 export class LeafletMapComponent implements OnInit {
     private map: Map;
+    // markers layer
     private markers: FeatureGroup = null;
+    // associative array of markers for each datasource
+    private groups: { [key: string]: FeatureGroup } = {};
+
+    @Input() data: IDataView[];
 
     options = {
         layers: [
@@ -21,23 +28,37 @@ export class LeafletMapComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit(): void { }
+    ngOnInit(): void {
+        this.data.forEach(i => {
+            i.source.subscribe(data => {
+                const group = this.getGroup(i.id);
+                group.clearLayers();
 
-    reset() {
-        this.markers.clearLayers();
+                if (data) {
+                    data.map((i: IGeoObject) => {
+                        if (i.lat && i.long) {
+                            marker([i.lat, i.long]).addTo(group)
+                        }
+                    });
+
+                    this.map.fitBounds(this.markers.getBounds());
+                }
+            })
+        })
     }
 
-    append(data: IGeoObject[]) {
-        data.map((i: IGeoObject) => {
-            if (i.lat && i.long) {
-                marker([i.lat, i.long]).addTo(this.markers)
-            }
-        });
+    getGroup(id: string) {
+        if (!this.groups[id]) {
+            const group = new FeatureGroup();
+            group.addTo(this.markers);
 
-        const bounds = this.markers.getBounds();
-        this.map.fitBounds(bounds);
+            this.groups[id] = group;
+        }
+
+        return this.groups[id];
     }
 
+    // TODO  remove
     show(item: IGeoObject) {
         this.map.setView([item.lat, item.long], 10);
     }

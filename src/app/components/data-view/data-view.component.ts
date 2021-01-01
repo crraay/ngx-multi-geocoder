@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+
 import { IGeoObject } from "../../interfaces/geo-object";
 import { IDataView } from "../../interfaces/data-view";
 
@@ -14,10 +15,5 @@ export class DataViewComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-    }
-
-    onItemClicked(i) {
-        debugger;
-        this.clicked.emit(i);
     }
 }
