@@ -12,8 +12,20 @@
                     class="btn btn-outline-primary dropdown-toggle"
                     style="border-radius: 0;">
             </button>
-            <div *dropdownMenu class="dropdown-menu" role="menu">
-                <span style="padding: 10px;"> Not implemented yet </span>
+            <div *dropdownMenu class="dropdown-menu" style="margin-left: 10px;">
+                <div class="form-check" style="margin-left: 12px;" *ngFor="let source of sourcesEnableMapping; let i = index">
+                    <input type="checkbox"
+                           style="height: 16px; width: 16px;"
+                           class="form-check-input"
+                           id="exampleCheck{{i}}"
+                           [(ngModel)]="source.enabled"
+                    />
+                    <label class="form-check-label"
+                           for="exampleCheck{{i}}"
+                    >
+                        {{source.source.id}}
+                    </label>
+                </div>
             </div>
 
             <button class="btn btn-outline-primary" (click)="onSearchBtnClick()">Let's search!</button>
@@ -22,7 +34,7 @@
 
     <tabset>
         <tab heading="Leaflet map">
-            <leaflet-map #leafletMap [data]="data"></leaflet-map>
+            <leaflet-map #leafletMap [sources]="sources"></leaflet-map>
         </tab>
 
         <tab heading="Another map">
@@ -34,10 +46,9 @@
     <br>
 
     <div class="row">
-        <div *ngFor="let d of data" class="col-4">
+        <div *ngFor="let source of enabledSources" class="col-4">
             <app-data-card
-                    [hidden]="!d || !(d.source | async)"
-                    [data]="d"
+                    [source]="source"
                     (clicked)="onItemClick($event)"
             ></app-data-card>
         </div>

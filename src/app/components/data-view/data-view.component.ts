@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { IGeoObject } from "../../interfaces/geo-object";
-import { IDataView } from "../../interfaces/data-view";
+import { IDataSource } from "../../interfaces/data-source";
 
 @Component({
     selector: 'app-data-card',
@@ -9,7 +9,7 @@ import { IDataView } from "../../interfaces/data-view";
     styleUrls: ['./data-view.component.scss']
 })
 export class DataViewComponent implements OnInit {
-    @Input() data: IDataView = null;
+    @Input() source: IDataSource = null;
     @Output() clicked = new EventEmitter<IGeoObject>();
 
     constructor() { }

@@ -1,9 +1,9 @@
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">{{ data.title }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">{{ data.subtitle }}</h6>
+        <h5 class="card-title">{{ source.id }} data</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ source.description }}</h6>
         <ul class="list-group">
-            <li *ngFor="let item of data.source | async"
+            <li *ngFor="let item of source.data | async"
                 class="list-group-item"
                 (click)="clicked.emit(item)"
             >

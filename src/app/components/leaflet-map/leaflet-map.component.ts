@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { latLng, marker, tileLayer, Map, FeatureGroup } from "leaflet";
 
 import { IGeoObject } from "../../interfaces/geo-object";
-import { IDataView } from "../../interfaces/data-view";
+import { IDataSource } from "../../interfaces/data-source";
 
 @Component({
     selector: 'leaflet-map',
@@ -16,7 +16,7 @@ export class LeafletMapComponent implements OnInit {
     // associative array of markers for each datasource
     private groups: { [key: string]: FeatureGroup } = {};
 
-    @Input() data: IDataView[];
+    @Input() sources: IDataSource[];
 
     options = {
         layers: [
@@ -29,8 +29,8 @@ export class LeafletMapComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        this.data.forEach(i => {
-            i.source.subscribe(data => {
+        this.sources.forEach(i => {
+            i.data.subscribe(data => {
                 const group = this.getGroup(i.id);
                 group.clearLayers();
 
