@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { latLng, marker, tileLayer, Map, FeatureGroup } from "leaflet";
+import { latLng, marker, tileLayer, Map, FeatureGroup, Marker } from "leaflet";
 
 import { IGeoObject } from "../../interfaces/geo-object";
 import { IDataSource } from "../../interfaces/data-source";
@@ -10,11 +10,14 @@ import { IDataSource } from "../../interfaces/data-source";
     styleUrls: ['./leaflet-map.component.scss']
 })
 export class LeafletMapComponent implements OnInit {
+    // map instance
     private map: Map;
-    // markers layer
-    private markers: FeatureGroup = null;
+    // marker groups container
+    private baseContainer: FeatureGroup = null;
     // associative array of markers for each datasource
-    private groups: { [key: string]: FeatureGroup } = {};
+    private markerGroups: { [key: string]: FeatureGroup } = {};
+    // mapping for finding specific marker
+    private markersMapping: { sourceId: string, data: IGeoObject, marker: Marker }[] = [];
 
     @Input() sources: IDataSource[];
 
@@ -29,43 +32,56 @@ export class LeafletMapComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
-        this.sources.forEach(i => {
-            i.data.subscribe(data => {
-                const group = this.getGroup(i.id);
+        this.sources.forEach(source => {
+            source.data.subscribe(data => {
+                const group = this.getGroup(source.id);
                 group.clearLayers();
+                // clear previous entries
+                this.markersMapping = this.markersMapping.filter(i => i.sourceId !== source.id);
 
                 if (data) {
                     data.map((i: IGeoObject) => {
                         if (i.lat && i.long) {
-                            marker([i.lat, i.long]).addTo(group)
+                            const m = marker([i.lat, i.long])
+                                .bindPopup(i.title)
+                                .addTo(group);
+
+                            this.markersMapping.push({
+                                sourceId: source.id,
+                                data: i,
+                                marker: m
+                            })
                         }
                     });
 
-                    this.map.fitBounds(this.markers.getBounds());
+                    this.map.fitBounds(this.baseContainer.getBounds());
                 }
             })
         })
     }
 
-    getGroup(id: string) {
-        if (!this.groups[id]) {
+    getGroup(sourceId: string) {
+        if (!this.markerGroups[sourceId]) {
             const group = new FeatureGroup();
-            group.addTo(this.markers);
+            group.addTo(this.baseContainer);
 
-            this.groups[id] = group;
+            this.markerGroups[sourceId] = group;
         }
 
-        return this.groups[id];
+        return this.markerGroups[sourceId];
     }
 
-    // TODO  remove
-    show(item: IGeoObject) {
-        this.map.setView([item.lat, item.long], 10);
+    onItemExternalClick(item: IGeoObject) {
+        const t = this.markersMapping.find(i => i.data === item);
+        if (t) {
+            this.map.setView(t.marker.getLatLng(), 10);
+            t.marker.openPopup();
+        }
     }
 
     onMapReady(map: Map) {
         this.map = map;
-        this.markers = new FeatureGroup();
-        this.markers.addTo(this.map);
+        this.baseContainer = new FeatureGroup();
+        this.baseContainer.addTo(this.map);
     }
 }

@@ -49,7 +49,7 @@
         <div *ngFor="let source of enabledSources" class="col-4">
             <app-data-card
                     [source]="source"
-                    (clicked)="onItemClick($event)"
+                    (clicked)="leafletMap.onItemExternalClick($event)"
             ></app-data-card>
         </div>
     </div>

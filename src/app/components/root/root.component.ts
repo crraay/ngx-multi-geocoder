@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { AigeoGeocoderService } from "../../services/aigeo-geocoder.service";
-import { IGeoObject } from "../../interfaces/geo-object";
-import { LeafletMapComponent } from "../leaflet-map/leaflet-map.component";
 import { GoogleGeocoderService } from "../../services/google-geocoder.service";
 import { YandexGeocoderService } from "../../services/yandex-geocoder.service";
 import { IDataSource } from "../../interfaces/data-source";
@@ -16,9 +14,6 @@ import { DataSource } from "../../classes/data-source";
 })
 export class RootComponent implements OnInit {
     searchQuery = 'красноярск';
-
-    // TODO remove
-    @ViewChild('leafletMap') leafletMapComponent: LeafletMapComponent;
 
     sources: IDataSource[] = null;
     sourcesEnableMapping: { enabled: boolean, source: IDataSource }[] = null;
@@ -64,10 +59,5 @@ export class RootComponent implements OnInit {
         // if source disabled emits null value
         this.sourcesEnableMapping
             .forEach(i => i.source.searchSubject.next(i.enabled ? this.searchQuery : null));
-    }
-
-    // TODO remove
-    onItemClick(item: IGeoObject) {
-        this.leafletMapComponent.show(item);
     }
 }
