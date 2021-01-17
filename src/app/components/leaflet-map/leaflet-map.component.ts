@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { latLng, marker, tileLayer, Map, FeatureGroup, Marker } from "leaflet";
+import { latLng, marker, tileLayer, Map, FeatureGroup, Marker, Icon, IconOptions } from "leaflet";
 
 import { IGeoObject } from "../../interfaces/geo-object";
 import { IDataSource } from "../../interfaces/data-source";
@@ -20,6 +20,13 @@ export class LeafletMapComponent implements OnInit {
     private markersMapping: { sourceId: string, data: IGeoObject, marker: Marker }[] = [];
 
     @Input() sources: IDataSource[];
+
+    readonly defaultIcon: Icon = new Icon<IconOptions>({
+        iconSize: [ 25, 41 ],
+        iconAnchor: [ 13, 5 ],
+        iconUrl: 'leaflet/marker-icon.png',
+        shadowUrl: 'leaflet/marker-shadow.png'
+    });
 
     options = {
         layers: [
@@ -42,7 +49,10 @@ export class LeafletMapComponent implements OnInit {
                 if (data) {
                     data.map((i: IGeoObject) => {
                         if (i.lat && i.long) {
-                            const m = marker([i.lat, i.long])
+                            const m = marker(
+                                [i.lat, i.long],
+                                { icon: this.defaultIcon }
+                            )
                                 .bindPopup(i.title)
                                 .addTo(group);
 
