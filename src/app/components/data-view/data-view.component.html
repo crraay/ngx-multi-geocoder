@@ -2,8 +2,11 @@
     <div class="card-body">
         <h5 class="card-title">{{ source.id }} data</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{ source.description }}</h6>
+        <div *ngIf="source.loading$ | async" class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
         <ul class="list-group">
-            <li *ngFor="let item of source.data | async"
+            <li *ngFor="let item of source.data$ | async"
                 class="list-group-item"
                 (click)="clicked.emit(item)"
             >

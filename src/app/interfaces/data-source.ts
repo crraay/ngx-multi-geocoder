@@ -3,8 +3,11 @@ import { IGeoObject } from "./geo-object";
 
 export interface IDataSource {
     id: string;
+    enabled: boolean;
     description?: string;
 
-    data: Observable<IGeoObject[]>;
+    data$: Observable<IGeoObject[]>;
     search(text: string);
+
+    loading$: Observable<boolean>;
 }

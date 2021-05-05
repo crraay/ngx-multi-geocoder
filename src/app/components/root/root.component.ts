@@ -15,17 +15,11 @@ import { DataSource } from "../../classes/data-source";
 export class RootComponent implements OnInit {
     searchQuery = 'красноярск';
 
-    sourcesEnableMapping: { enabled: boolean, source: IDataSource }[];
-
-    get sources(): IDataSource[] {
-        return this.sourcesEnableMapping
-            .map(i => i.source);
-    }
+    sources: IDataSource[];
 
     get enabledSources(): IDataSource[] {
-        return this.sourcesEnableMapping
-            .filter(i => i.enabled)
-            .map(i => i.source);
+        return this.sources
+            .filter(i => i.enabled);
     }
 
     constructor(
@@ -33,29 +27,18 @@ export class RootComponent implements OnInit {
         private googleService: GoogleGeocoderService,
         private yandexService: YandexGeocoderService,
     ) {
-        this.sourcesEnableMapping = [
-            {
-                enabled: true,
-                source: new DataSource('Google', null, this.googleService),
-            },
-            {
-                enabled: true,
-                source: new DataSource('Yandex', null, this.yandexService),
-            },
-            {
-                enabled: false,
-                source: new DataSource('Aigeo',  'Only Krasnoyarsk\'s area searches allowed', this.aigeoService),
-            },
-        ]
+        this.sources = [
+            new DataSource('Google', true,null, this.googleService),
+            new DataSource('Yandex', true,null, this.yandexService),
+            new DataSource('Aigeo', false, 'Only Krasnoyarsk\'s area searches allowed', this.aigeoService),
+        ];
     }
 
     ngOnInit(): void {
     }
 
     onSearchBtnClick() {
-        // emits search event for all sources
-        // if source disabled emits null value
-        this.sourcesEnableMapping
-            .forEach(i => i.source.search(i.enabled ? this.searchQuery : null));
+        // emit search event for all sources
+        this.sources.forEach(i => i.search(this.searchQuery));
     }
 }

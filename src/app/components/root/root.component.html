@@ -13,7 +13,7 @@
                     style="border-radius: 0;">
             </button>
             <div *dropdownMenu class="dropdown-menu" style="margin-left: 10px;">
-                <div class="form-check" style="margin-left: 12px;" *ngFor="let source of sourcesEnableMapping; let i = index">
+                <div class="form-check" style="margin-left: 12px;" *ngFor="let source of sources; let i = index">
                     <input type="checkbox"
                            style="height: 16px; width: 16px;"
                            class="form-check-input"
@@ -23,7 +23,7 @@
                     <label class="form-check-label"
                            for="exampleCheck{{i}}"
                     >
-                        {{source.source.id}}
+                        {{ source.id }}
                     </label>
                 </div>
             </div>

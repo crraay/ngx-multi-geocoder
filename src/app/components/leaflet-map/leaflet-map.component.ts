@@ -40,7 +40,7 @@ export class LeafletMapComponent implements OnInit {
 
     ngOnInit(): void {
         this.sources.forEach(source => {
-            source.data.subscribe(data => {
+            source.data$.subscribe(data => {
                 const group = this.getGroup(source.id);
                 group.clearLayers();
                 // clear previous entries
