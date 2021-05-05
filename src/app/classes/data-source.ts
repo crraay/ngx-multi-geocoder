@@ -8,7 +8,7 @@ export class DataSource implements IDataSource {
     public id: string;
     public description?: string;
 
-    public searchSubject: Subject<string>;
+    private searchSubject: Subject<string>;
     public data: Observable<IGeoObject[]>;
 
     constructor(id: string, description: string = null, service: IGeocoderService) {
@@ -28,5 +28,9 @@ export class DataSource implements IDataSource {
             }),
             shareReplay(1)
         );
+    }
+
+    public search(text: string) {
+        this.searchSubject.next(text);
     }
 }
