@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { AigeoGeocoderService } from "../../services/aigeo-geocoder.service";
 import { GoogleGeocoderService } from "../../services/google-geocoder.service";
 import { YandexGeocoderService } from "../../services/yandex-geocoder.service";
 import { IDataSource } from "../../interfaces/data-source";
 import { DataSource } from "../../classes/data-source";
+import { fromEvent } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 
 
 @Component({
@@ -12,8 +14,11 @@ import { DataSource } from "../../classes/data-source";
     templateUrl: './root.component.html',
     styleUrls: ['./root.component.scss']
 })
-export class RootComponent implements OnInit {
-    searchQuery = 'красноярск';
+export class RootComponent implements OnInit, AfterViewInit {
+    @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+    @ViewChild('searchButton') searchButton: ElementRef<HTMLButtonElement>;
+
+    defaultSearchQuery = 'красноярск';
 
     sources: IDataSource[];
 
@@ -37,8 +42,16 @@ export class RootComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    onSearchBtnClick() {
-        // emit search event for all sources
-        this.sources.forEach(i => i.search(this.searchQuery));
+    ngAfterViewInit() {
+        const input = this.searchInput;
+
+        // search button click event handler
+        fromEvent(this.searchButton.nativeElement, 'click')
+            .pipe(debounceTime(500))
+            .subscribe(event => {
+                const searchQuery = input.nativeElement.value;
+                // emit search event for all sources
+                this.sources.forEach(i => i.search(searchQuery));
+            });
     }
 }

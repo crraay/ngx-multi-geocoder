@@ -1,8 +1,8 @@
 <div class="main container">
 
     <div class="input-group mb-3">
-        <input class="form-control"
-               [(ngModel)]="searchQuery"
+        <input #searchInput class="form-control"
+               [defaultValue]="defaultSearchQuery"
                placeholder="Type country, city or street here..."
         />
 
@@ -28,7 +28,7 @@
                 </div>
             </div>
 
-            <button class="btn btn-outline-primary" (click)="onSearchBtnClick()">Let's search!</button>
+            <button #searchButton class="btn btn-outline-primary">Let's search!</button>
         </div>
     </div>
 

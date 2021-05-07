@@ -24,8 +24,7 @@ export class DataSource implements IDataSource {
 
         const that = this;
         this.searchSubject.pipe(
-            // TODO move to click handler
-            debounceTime(500),
+            filter(query => query !== null),
             tap((data) => that.dataSubject.next(null)),
             filter(() => that.enabled),
             tap((data) => that.loadingSubject.next(true)),
