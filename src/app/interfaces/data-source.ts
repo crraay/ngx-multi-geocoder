@@ -1,13 +1,15 @@
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { IGeoObject } from "./geo-object";
 
 export interface IDataSource {
     id: string;
-    enabled: boolean;
     description?: string;
 
-    data$: Observable<IGeoObject[]>;
-    search(text: string);
-
     loading$: Observable<boolean>;
+    data$: Observable<IGeoObject[]>;
+
+    enabled: boolean;
+    enabled$: Observable<boolean>;
+
+    search(text: string);
 }

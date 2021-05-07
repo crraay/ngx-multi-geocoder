@@ -1,15 +1,14 @@
 import { IDataSource } from "../interfaces/data-source";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
 import { IGeoObject } from "../interfaces/geo-object";
 import { IGeocoderService } from "../interfaces/geocoder-service";
-import { debounceTime, filter, mergeMap, shareReplay, tap } from "rxjs/operators";
+import { filter, mergeMap, tap } from "rxjs/operators";
 
 export class DataSource implements IDataSource {
     public id: string;
-    public enabled: boolean;
     public description?: string;
 
-    private searchSubject: Subject<string> = new Subject<string>();
+    private searchSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
     private dataSubject: Subject<IGeoObject[]> = new Subject<IGeoObject[]>();
     public data$: Observable<IGeoObject[]> = this.dataSubject.asObservable();
@@ -17,22 +16,44 @@ export class DataSource implements IDataSource {
     private loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
-    constructor(id: string, enabled: boolean, description: string = null, service: IGeocoderService) {
+    private enabledSubject: BehaviorSubject<boolean>;
+    public enabled$: Observable<boolean>;
+    set enabled(value: boolean) {
+        this.enabledSubject.next(value);
+    }
+    get enabled(): boolean {
+        return this.enabledSubject.getValue();
+    }
+
+    constructor(
+        id: string,
+        enabled: boolean,
+        description: string = null,
+        service: IGeocoderService
+    ) {
         this.id = id;
-        this.enabled = enabled;
         if (description) this.description = description;
 
-        const that = this;
-        this.searchSubject.pipe(
-            filter(query => query !== null),
-            tap((data) => that.dataSubject.next(null)),
-            filter(() => that.enabled),
-            tap((data) => that.loadingSubject.next(true)),
-            mergeMap((query: string) => service.search(query)),
-        ).subscribe(data => {
-            this.dataSubject.next(data);
-            this.loadingSubject.next(false);
-        });
+        // init here because we need init value
+        this.enabledSubject = new BehaviorSubject<boolean>(enabled);
+        this.enabled$ = this.enabledSubject.asObservable();
+
+        combineLatest([
+            this.searchSubject.asObservable(),
+            this.enabled$
+        ])
+            .pipe(
+                filter(([query, enabled]) => query !== null),
+                // TODO not sure we need it here
+                tap(() => this.dataSubject.next(null)),
+                filter(([query, enabled]) => enabled),
+                tap(() => this.loadingSubject.next(true)),
+                mergeMap(([query, enabled]) => service.search(query)),
+            )
+            .subscribe((data: IGeoObject[]) => {
+                this.dataSubject.next(data);
+                this.loadingSubject.next(false);
+            });
     }
 
     public search(text: string) {
