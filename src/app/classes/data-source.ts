@@ -2,7 +2,7 @@ import { IDataSource } from "../interfaces/data-source";
 import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
 import { IGeoObject } from "../interfaces/geo-object";
 import { IGeocoderService } from "../interfaces/geocoder-service";
-import { filter, mergeMap, tap } from "rxjs/operators";
+import { filter, mergeMap, tap} from "rxjs/operators";
 
 export class DataSource implements IDataSource {
     public id: string;
@@ -42,17 +42,16 @@ export class DataSource implements IDataSource {
             this.searchSubject.asObservable(),
             this.enabled$
         ])
+            // TODO repeat response if query doesnt change
             .pipe(
                 filter(([query, enabled]) => query !== null),
-                // TODO not sure we need it here
-                tap(() => this.dataSubject.next(null)),
                 filter(([query, enabled]) => enabled),
                 tap(() => this.loadingSubject.next(true)),
                 mergeMap(([query, enabled]) => service.search(query)),
+                tap(() => this.loadingSubject.next(false)),
             )
             .subscribe((data: IGeoObject[]) => {
                 this.dataSubject.next(data);
-                this.loadingSubject.next(false);
             });
     }
 

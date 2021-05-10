@@ -3,6 +3,8 @@ import { latLng, marker, tileLayer, Map, FeatureGroup, Marker, Icon, IconOptions
 
 import { IGeoObject } from "../../interfaces/geo-object";
 import { IDataSource } from "../../interfaces/data-source";
+import { filter } from "rxjs/operators";
+
 
 @Component({
     selector: 'leaflet-map',
@@ -39,40 +41,50 @@ export class LeafletMapComponent implements OnInit {
     constructor() { }
 
     ngOnInit(): void {
+        // TODO unsubscribe
         this.sources.forEach(source => {
             source.data$.subscribe((data: IGeoObject[]) => {
+                this.clear(source.id);
                 this.setMarkers(source.id, data);
-            })
+            });
+
+            source.enabled$
+                .pipe(filter(value => !value))
+                .subscribe(value => {
+                    this.clear(source.id);
+                })
         })
     }
 
-    setMarkers(sourceId: string, data: IGeoObject[]) {
+    clear(sourceId: string) {
         const group = this.getGroup(sourceId);
         group.clearLayers();
         // clear previous entries
         this.markersMapping = this.markersMapping.filter(i => i.sourceId !== sourceId);
+    }
 
-        if (data) {
-            data.forEach((i: IGeoObject) => {
-                if (i.lat && i.long) {
-                    const m = marker(
-                        [i.lat, i.long],
-                        { icon: this.defaultIcon }
-                    )
-                        .bindPopup(i.title)
-                        .addTo(group);
+    setMarkers(sourceId: string, data: IGeoObject[]) {
+        const group = this.getGroup(sourceId);
 
-                    this.markersMapping.push({
-                        sourceId: sourceId,
-                        data: i,
-                        marker: m
-                    })
-                }
-            });
+        data.forEach((i: IGeoObject) => {
+            if (i.lat && i.long) {
+                const m = marker(
+                    [i.lat, i.long],
+                    { icon: this.defaultIcon }
+                )
+                    .bindPopup(i.title)
+                    .addTo(group);
 
-            // TODO move to higher level, call when all data$ are emited
-            this.map.fitBounds(this.baseContainer.getBounds());
-        }
+                this.markersMapping.push({
+                    sourceId: sourceId,
+                    data: i,
+                    marker: m
+                })
+            }
+        });
+
+        // TODO move to higher level, call when all data$ are emited
+        this.map.fitBounds(this.baseContainer.getBounds());
     }
 
     getGroup(sourceId: string) {
