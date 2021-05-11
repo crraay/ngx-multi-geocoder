@@ -5,7 +5,7 @@
         <div *ngIf="source.loading$ | async" class="spinner-border text-primary" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-        <ul class="list-group">
+        <ul *ngIf="!(source.loading$ | async)" class="list-group">
             <li *ngFor="let item of source.data$ | async"
                 class="list-group-item"
                 (click)="clicked.emit(item)"

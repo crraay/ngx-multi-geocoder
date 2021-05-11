@@ -2,7 +2,7 @@ import { IDataSource } from "../interfaces/data-source";
 import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
 import { IGeoObject } from "../interfaces/geo-object";
 import { IGeocoderService } from "../interfaces/geocoder-service";
-import { filter, mergeMap, tap} from "rxjs/operators";
+import { filter, mergeMap, shareReplay, tap } from "rxjs/operators";
 
 export class DataSource implements IDataSource {
     public id: string;
@@ -10,8 +10,7 @@ export class DataSource implements IDataSource {
 
     private searchSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
-    private dataSubject: Subject<IGeoObject[]> = new Subject<IGeoObject[]>();
-    public data$: Observable<IGeoObject[]> = this.dataSubject.asObservable();
+    public data$: Observable<IGeoObject[]>;
 
     private loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public loading$: Observable<boolean> = this.loadingSubject.asObservable();
@@ -38,21 +37,18 @@ export class DataSource implements IDataSource {
         this.enabledSubject = new BehaviorSubject<boolean>(enabled);
         this.enabled$ = this.enabledSubject.asObservable();
 
-        combineLatest([
+        this.data$ = combineLatest([
             this.searchSubject.asObservable(),
             this.enabled$
         ])
-            // TODO repeat response if query doesnt change
             .pipe(
                 filter(([query, enabled]) => query !== null),
                 filter(([query, enabled]) => enabled),
                 tap(() => this.loadingSubject.next(true)),
                 mergeMap(([query, enabled]) => service.search(query)),
                 tap(() => this.loadingSubject.next(false)),
+                shareReplay(1),
             )
-            .subscribe((data: IGeoObject[]) => {
-                this.dataSubject.next(data);
-            });
     }
 
     public search(text: string) {
