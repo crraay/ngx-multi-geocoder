@@ -3,7 +3,8 @@ import { latLng, marker, tileLayer, Map, FeatureGroup, Marker, Icon, IconOptions
 
 import { IGeoObject } from "../../interfaces/geo-object";
 import { IDataSource } from "../../interfaces/data-source";
-import { filter } from "rxjs/operators";
+import { debounceTime, filter } from "rxjs/operators";
+import { merge } from "rxjs";
 
 
 @Component({
@@ -15,7 +16,7 @@ export class LeafletMapComponent implements OnInit {
     // map instance
     private map: Map;
     // marker groups container
-    private baseContainer: FeatureGroup = null;
+    private baseContainer: FeatureGroup = new FeatureGroup();
     // associative array of markers for each datasource
     private markerGroups: { [key: string]: FeatureGroup } = {};
     // mapping for finding specific marker
@@ -54,6 +55,10 @@ export class LeafletMapComponent implements OnInit {
                     this.clear(source.id);
                 })
         })
+
+        const all = this.sources.map(i => i.data$);
+        merge(...all).pipe(debounceTime(300))
+            .subscribe(() => this.map.fitBounds(this.baseContainer.getBounds()));
     }
 
     clear(sourceId: string) {
@@ -82,9 +87,6 @@ export class LeafletMapComponent implements OnInit {
                 })
             }
         });
-
-        // TODO move to higher level, call when all data$ are emited
-        this.map.fitBounds(this.baseContainer.getBounds());
     }
 
     getGroup(sourceId: string) {
@@ -108,7 +110,6 @@ export class LeafletMapComponent implements OnInit {
 
     onMapReady(map: Map) {
         this.map = map;
-        this.baseContainer = new FeatureGroup();
         this.baseContainer.addTo(this.map);
     }
 }
