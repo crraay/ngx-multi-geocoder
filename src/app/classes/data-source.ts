@@ -1,22 +1,23 @@
 import { IDataSource } from "../interfaces/data-source";
-import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { IGeoObject } from "../interfaces/geo-object";
 import { IGeocoderService } from "../interfaces/geocoder-service";
 import { filter, mergeMap, shareReplay, tap } from "rxjs/operators";
 
 export class DataSource implements IDataSource {
-    public id: string;
-    public description?: string;
+    public readonly id: string;
+    public readonly description?: string;
 
-    private searchSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+    private readonly searchSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
-    public data$: Observable<IGeoObject[]>;
+    public readonly data$: Observable<IGeoObject[]>;
 
-    private loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-    public loading$: Observable<boolean> = this.loadingSubject.asObservable();
+    private readonly loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    public readonly loading$: Observable<boolean> = this.loadingSubject.asObservable();
 
-    private enabledSubject: BehaviorSubject<boolean>;
-    public enabled$: Observable<boolean>;
+    private readonly enabledSubject: BehaviorSubject<boolean>;
+    public readonly enabled$: Observable<boolean>;
+
     set enabled(value: boolean) {
         this.enabledSubject.next(value);
     }
