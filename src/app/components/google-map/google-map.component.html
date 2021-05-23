@@ -1,0 +1,8 @@
+<agm-map [latitude]="lat" [longitude]="lng" [streetViewControl]="false">
+    <div *ngFor="let t of markersMap | keyvalue">
+        <agm-marker *ngFor="let m of t.value"
+                    [latitude]="m.lat"
+                    [longitude]="m.long"
+        ></agm-marker>
+    </div>
+</agm-map>

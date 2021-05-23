@@ -14,13 +14,16 @@ import { AigeoGeocoderService } from "./services/aigeo-geocoder.service";
 import { GoogleGeocoderService } from "./services/google-geocoder.service";
 import { YandexGeocoderService } from "./services/yandex-geocoder.service";
 import { DataViewComponent } from './components/data-view/data-view.component';
-
+import { AgmCoreModule } from "@agm/core";
+import { env } from 'src/env/env';
+import { GoogleMapComponent } from './components/google-map/google-map.component';
 
 @NgModule({
     declarations: [
         RootComponent,
         LeafletMapComponent,
-        DataViewComponent
+        DataViewComponent,
+        GoogleMapComponent
     ],
     imports: [
         BrowserModule,
@@ -28,6 +31,9 @@ import { DataViewComponent } from './components/data-view/data-view.component';
         HttpClientModule,
         FormsModule,
         AppRoutingModule,
+        AgmCoreModule.forRoot({
+            apiKey: env.GOOGLE_MAPS_API_KEY
+        }),
         LeafletModule,
         TabsModule.forRoot(),
         BsDropdownModule.forRoot(),
@@ -35,7 +41,7 @@ import { DataViewComponent } from './components/data-view/data-view.component';
     providers: [
         AigeoGeocoderService,
         GoogleGeocoderService,
-        YandexGeocoderService,
+        YandexGeocoderService
     ],
     bootstrap: [RootComponent]
 })
