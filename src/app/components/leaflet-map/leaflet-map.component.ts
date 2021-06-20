@@ -25,8 +25,9 @@ export class LeafletMapComponent implements OnInit {
     @Input() sources: IDataSource[];
 
     readonly defaultIcon: Icon = new Icon<IconOptions>({
-        iconSize: [ 25, 41 ],
-        iconAnchor: [ 13, 5 ],
+        iconSize: [ 24, 40 ],
+        iconAnchor: [ 12, 40 ],
+        popupAnchor: [ 0, -40 ],
         iconUrl: 'leaflet/marker-icon.png',
         shadowUrl: 'leaflet/marker-shadow.png'
     });
