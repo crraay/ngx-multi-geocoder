@@ -59,7 +59,13 @@ export class LeafletMapComponent implements OnInit {
 
         const all = this.sources.map(i => i.data$);
         merge(...all).pipe(debounceTime(300))
-            .subscribe(() => this.map.fitBounds(this.baseContainer.getBounds()));
+            .subscribe(() => {
+                const bounds = this.baseContainer.getBounds();
+
+                if (bounds.isValid()) {
+                    this.map.fitBounds(bounds);
+                }
+            });
     }
 
     clear(sourceId: string) {
