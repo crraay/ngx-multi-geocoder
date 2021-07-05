@@ -9,6 +9,10 @@
                     [latitude]="m.lat"
                     [longitude]="m.long"
                     [agmFitBounds]="true"
-        ></agm-marker>
+        >
+            <agm-info-window [disableAutoPan]="true">
+                {{ m.title }}
+            </agm-info-window>
+        </agm-marker>
     </div>
 </agm-map>
