@@ -10,6 +10,4 @@ export interface IDataSource {
 
     enabled: boolean;
     enabled$: Observable<boolean>;
-
-    search(text: string);
 }

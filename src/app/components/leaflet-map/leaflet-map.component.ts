@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { latLng, marker, tileLayer, Map, FeatureGroup, Marker, Icon, IconOptions } from "leaflet";
 
 import { IGeoObject } from "../../interfaces/geo-object";
@@ -12,7 +12,7 @@ import { merge } from "rxjs";
     templateUrl: './leaflet-map.component.html',
     styleUrls: ['./leaflet-map.component.scss']
 })
-export class LeafletMapComponent implements OnInit {
+export class LeafletMapComponent implements OnInit, OnChanges {
     // map instance
     private map: Map;
     // marker groups container
@@ -42,30 +42,33 @@ export class LeafletMapComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit(): void {
-        // TODO unsubscribe
-        this.sources.forEach(source => {
-            source.data$.subscribe((data: IGeoObject[]) => {
-                this.clear(source.id);
-                this.setMarkers(source.id, data);
-            });
+    ngOnInit(): void { }
 
-            source.enabled$
-                .pipe(filter(value => !value))
-                .subscribe(value => {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.sources) {
+            this.sources.forEach(source => {
+                source.data$.subscribe((data: IGeoObject[]) => {
                     this.clear(source.id);
-                })
-        })
+                    this.setMarkers(source.id, data);
+                });
 
-        const all = this.sources.map(i => i.data$);
-        merge(...all).pipe(debounceTime(300))
-            .subscribe(() => {
-                const bounds = this.baseContainer.getBounds();
-
-                if (bounds.isValid()) {
-                    this.map.fitBounds(bounds);
-                }
+                source.enabled$
+                    .pipe(filter(value => !value))
+                    .subscribe(value => {
+                        this.clear(source.id);
+                    })
             });
+
+            const all = this.sources.map(i => i.data$);
+            merge(...all).pipe(debounceTime(300))
+                .subscribe(() => {
+                    const bounds = this.baseContainer.getBounds();
+
+                    if (bounds.isValid()) {
+                        this.map.fitBounds(bounds);
+                    }
+                });
+        }
     }
 
     clear(sourceId: string) {

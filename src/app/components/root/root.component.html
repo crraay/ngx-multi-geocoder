@@ -27,12 +27,10 @@
                     </label>
                 </div>
             </div>
-
-            <button #searchButton class="btn btn-outline-primary">Let's search!</button>
         </div>
     </div>
 
-    <tabset>
+    <tabset *ngIf="sources">
         <tab heading="Leaflet map">
             <leaflet-map #leafletMap [sources]="sources"></leaflet-map>
         </tab>
@@ -43,9 +41,7 @@
 
     </tabset>
 
-    <br>
-
-    <div class="row">
+    <div *ngIf="sources" class="row">
         <div *ngFor="let source of enabledSources" class="col-4">
             <app-data-card
                     [source]="source"
